@@ -135,6 +135,38 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
             this.emit(':tell', noAccessToken, tryLaterText);
         }
     },
+    'getFriendsIntent': function(){
+        var alexa = this;
+        //console.log("The message:" + this);
+        FB.api("/me/friends",
+            function (response) {
+                if (response && !response.error) {
+                    /* handle the result */
+                    //console.log("Friends: " + response.data[0].id);
+                    var counter = 0;
+                    for(var p in response.data)
+                    {
+                        //if(response.data.hasOwnProperty(p))
+                            counter++;
+                    }
+                    console.log("Friends: " + response["data"]);
+
+            /*                 function count(){
+                    var counter= 0;
+                    for(var p in this){
+                    if(this.hasOwnProperty(p))++counter;
+                    }
+                    return counter;
+                    }*/
+                    alexa.emit(':ask', 'I got all your '+counter+' friends');
+                    }
+                    else {
+                    console.log(response.error);
+                    // Output for Alexa, when there is an error.
+                    alexa.emit(':ask', "There was an error getting your friends");
+                    }
+                });
+    },
 
     'AMAZON.CancelIntent': function () {
         // Triggered wheen user asks Alexa top cancel interaction
@@ -142,7 +174,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
     },
 
     'AMAZON.StopIntent': function () {
-        // Triggered wheen user asks Alexa top stop interaction
+        // Triggered when user asks Alexa to stop interaction
         this.emit(':tell', stopSkillMessage);
     },
 
