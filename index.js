@@ -1,3 +1,4 @@
+'use strict';
 var Alexa = require('alexa-sdk');
 var FB = require('facebook-node');
 var util = require('util');
@@ -5,7 +6,7 @@ var util = require('util');
 // Messages used for Alexa to tell the user
 var repeatWelcomeMessage = "you should be able to read your feed, and make a post using this skill.";
 
-var welcomeMessage = "Welcome to facebook test skill, " + repeatWelcomeMessage;
+var welcomeMessage = "Welcome to facebook through Alexa, " + repeatWelcomeMessage;
 
 var stopSkillMessage = "Ok, see you next time!";
 
@@ -16,6 +17,11 @@ var tryLaterText = "Please try again later."
 var noAccessToken = "There was a problem getting the correct token for this skill, " + tryLaterText;
 
 var accessToken = "";
+
+var states = {
+    TALKMODE: '_GUESSMODE', // User is trying to guess the number.
+    MODE: '_STARTMODE'  // Prompt the user to start or restart the game.
+};
 
 // Create a new session handler
 var Handler = {
@@ -79,15 +85,15 @@ var Handler = {
             FB.api("/me/feed", "POST",
             {
                 // Message to be posted
-                "message": "This is Alexa, I can now access a whole new world of information, good luck!"
+                "message": "This is Alexa, please do something k thanks. I can now access a whole new world of information, good luck!"
             }, function (response) {
                 if (response && !response.error) {
                     // Alexa output for successful post
-                    alexa.emit(':tell', "Post successfull");
+                    alexa.emit(':tell', "I posted successfully yay");
                 } else {
                     console.log(response.error);
                     // Output for Alexa, when there is an error.
-                    alexa.emit(':ask', "There was an error posting to your feed, please try again");
+                    alexa.emit(':ask', "There was an error posting to your feed, I did that a bunch of times during development");
                 }
             });
 
@@ -123,3 +129,4 @@ exports.handler = function (event, context, callback) {
     alexa.registerHandlers(Handler);
     alexa.execute();
 };
+// "accessToken": "EAAFPSzZCqLfUBAKZAbYif2kCGt1HCz344XKhpt7FonbsJXo8zJmf350OYprUax7wlxgyXQeVoHWSlOkf1BLyW9YfdI0hirfbg83hNKhwPCFZCYbw4KzVPjU5OZB30l8yHcEo1AeZBqJkyZCZA5c3VdbGJQz04bJuWGQOJf45k2DCQZDZD"
