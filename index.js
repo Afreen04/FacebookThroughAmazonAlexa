@@ -4,7 +4,7 @@ var FB = require('facebook-node');
 var util = require('util');
 
 // Messages used for Alexa to tell the user
-var repeatWelcomeMessage = "you should be able to read your feed, and make a post using this skill.";
+var repeatWelcomeMessage = "You can read your feed, and make a post using this skill.";
 
 var welcomeMessage = "Welcome to facebook through Alexa, ";// + repeatWelcomeMessage;
 
@@ -61,16 +61,17 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                 if (response && !response.error) {
                     // If we have data
                     if (response.data) {
-                        var output = "";
+                        var output = "Here are the latest three posts ";
                         var max = 3;
 
                         // Take the top three posts and parse them to be read out by Alexa.
                         for (var i = 0; i < response.data.length; i++) {
                             if (i < max) {
                                 output += "Post " + (i + 1) + " " + response.data[i].message + ". ";
+                                //console.log("Date: " + (response.data[i].updated_time).toString());
                             }
                         }
-                        alexa.emit(':ask', output, output);
+                        alexa.emit(':ask', output, "What would you like to do next?");
                     } else {
                         // REPORT PROBLEM WITH PARSING DATA
                     }
@@ -82,7 +83,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
         } else {
             this.emit(':tell', noAccessToken, tryLaterText);
         }
-    },
+    },/*
     //Get the users messages
     'getMessagesIntent': function(){
         var alexa = this;
@@ -93,7 +94,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
             FB.api("/me/inbox",
             function (response) {
             if (response && !response.error) {
-                /* handle the result */
+                
             //console.log("Messages from inbox:", response.data);
             //console.log(response);
             alexa.emit(':ask', "I got all the messages");
@@ -108,13 +109,14 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
             this.emit(':tell', noAccessToken, tryLaterText);
         }
 
-    },
+    },*/
     // Write a post to Facebook feed handler.
     'writePostIntent': function () {
 
         var alexa = this;
-        console.log("The message:" + this);
-        var msg = String(this.event.request.intent.slots.postText.value)
+        //console.log("The message:" + this);
+        var msg = String(this.event.request.intent.slots.postText.value);
+
         // Check if we have access tokens.
         if (accessToken) {
             FB.api("/me/feed", "POST",
@@ -124,24 +126,88 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
             }, function (response) {
                 if (response && !response.error) {
                     // Alexa output for successful post
-                    alexa.emit(':ask', "I posted successfully","What would you like to do next?");
+                    alexa.emit(':ask', "I posted "+ msg +" successfully" ,"What would you like to do next?");
                 } else {
                     console.log(response.error);
                     // Output for Alexa, when there is an error.
-                    alexa.emit(':ask', "There was an error posting to your feed, I did that a bunch of times during development");
+                    alexa.emit(':ask', "There was an error posting to your feed");//, I did that a bunch of times during development");
                 }
             });
         }else{
             this.emit(':tell', noAccessToken, tryLaterText);
         }
     },
+    /*
+    'getBirthdayIntent':function()
+    {
+        var alexa = this;
+        if(accessToken){
+        FB.api(
+    "/me",
+    function (response) {
+      if (response && !response.error) {
+        
+        console.log("Birthday:" + response);
+        for(var i in response)
+            console.log(response[i]);
+        alexa.emit(':ask', "I got your details successfully");
+
+       } else {
+                    console.log(response.error);
+                    // Output for Alexa, when there is an error.
+                    alexa.emit(':ask', "There was an error retrieving your details");
+                }
+    });
+    }else{
+            this.emit(':tell', noAccessToken, tryLaterText);
+        }
+    },*/
+    'readNFeedIntent':function()
+    {
+        var alexa = this;
+        console.log("Breaks bfore max num call");
+        console.log(JSON.stringify(this.event.request.intent));
+        console.log("num = " + this.event.request.intent.slots.num.value);
+        var maxNum = parseInt(this.event.request.intent.slots.num.value);
+        if(accessToken){
+        FB.api("/me/feed", function (response) {
+                if (response && !response.error) {
+                    // If we have data
+                    if (response.data) {
+                        var output = "Here are your latest posts ";// + maxNum.toString() +  " posts ";
+                        //console.log("The max = " + maxNum);
+                        // Take the top X posts and parse them to be read out by Alexa.
+                        console.log(response.data);
+                        for (var i = 0; i < response.data.length; i++) {
+                            if (i < maxNum) {
+                                output += "Post " + (i + 1) + " " + response.data[i].message + ". ";
+                                //console.log("Date: " + (response.data[i].updated_time).toString());
+                            }
+                        }
+                        alexa.emit(':ask', output, "What would you like to do next?");
+                    } else {
+                        // REPORT PROBLEM WITH PARSING DATA
+                    }
+                } else {
+                    // Handle errors here.
+                    console.log(response.error);
+                }
+            });
+
+
+    }else{
+            this.emit(':tell', noAccessToken, tryLaterText);
+        }
+    },
+
+    /*
     'getFriendsIntent': function(){
         var alexa = this;
         //console.log("The message:" + this);
         FB.api("/me/friends",
             function (response) {
                 if (response && !response.error) {
-                    /* handle the result */
+                    
                     //console.log("Friends: " + response.data[0].id);
                     var counter = 0;
                     for(var p in response.data)
@@ -151,13 +217,13 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                     }
                     console.log("Friends: " + response["data"]);
 
-            /*                 function count(){
+                            function count(){
                     var counter= 0;
                     for(var p in this){
                     if(this.hasOwnProperty(p))++counter;
                     }
                     return counter;
-                    }*/
+                    }
                     alexa.emit(':ask', 'I got all your '+counter+' friends');
                     }
                     else {
@@ -166,7 +232,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                     alexa.emit(':ask', "There was an error getting your friends");
                     }
                 });
-    },
+    },*/
 
     'AMAZON.CancelIntent': function () {
         // Triggered wheen user asks Alexa top cancel interaction
