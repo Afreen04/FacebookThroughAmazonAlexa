@@ -1,4 +1,4 @@
-Use facebook through Amazon Alexa
+##Use facebook through Amazon Alexa
 
 ## Install
 Make sure you have [Node.js](https://nodejs.org/en/) installed
