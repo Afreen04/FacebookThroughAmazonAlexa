@@ -14,4 +14,6 @@ npm install facebook-node
 ## How to run it?
 You now need to zip the index.js and the node_modules file. This is what is needed to upload to Amazon when asked to upload code when setting up a Lamba function.
 
+Facebook app privacy policy available at https://www.iubenda.com/privacy-policy/8008887
+
 
