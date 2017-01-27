@@ -6,13 +6,13 @@ var util = require('util');
 // Messages used for Alexa to tell the user
 var repeatWelcomeMessage = "You can tell me to post 'something' or say 'read my feed'.";
 
-var welcomeMessage = "Welcome to facebook through Alexa, " + repeatWelcomeMessage;
+var welcomeMessage = "Welcome to the Unofficial post to facebook skill, " + repeatWelcomeMessage;
 
 var stopSkillMessage = "goodbye, see you next time!";
 
 var helpText = "You can say things like read my feed, get top two posts from my feed, or post 'It's a beautiful day'. What would you like to do?";
 
-var tryLaterText = "Please try again later."
+var tryLaterText = "Please check if you have a connection to Facebook.com and if you have integrated a Facebook account with permission to post with this skill."
 
 var noAccessToken = "There was a problem connecting to facebook, " + tryLaterText;
 
@@ -103,7 +103,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                 } else {
                     console.log(response.error);
                     // Output for Alexa, when there is an error.
-                    alexa.emit(':ask', "There was an error posting to your feed");//, I did that a bunch of times during development");
+                    alexa.emit(':ask', "There was an error posting to your feed" + tryLaterText);
                 }
             });
         }else{
