@@ -4,17 +4,17 @@ var FB = require('facebook-node');
 var util = require('util');
 
 // Messages used for Alexa to tell the user
-var repeatWelcomeMessage = "You can tell me to post 'something' or say 'read my feed'.";
+var repeatWelcomeMessage = "You can tell me to 'retrieve my feed', 'read my feed' or 'get top five posts from my feed'. What would you like to do?";
 
-var welcomeMessage = "Welcome to the Unofficial post to facebook skill, " + repeatWelcomeMessage;
+var welcomeMessage = "Welcome to the Unofficial Read facebook feed skill, " + repeatWelcomeMessage;
 
 var stopSkillMessage = "goodbye, see you next time!";
 
-var helpText = "You can say things like read my feed, get top two posts from my feed, or post 'It's a beautiful day'. What would you like to do?";
+var helpText = "You can say things like 'retrieve my feed', 'read my feed' or 'get top five posts from my feed'. What would you like to do?";
 
-var tryLaterText = "Please check if you have a connection to Facebook.com and if you have integrated a Facebook account with permission to post with this skill."
+var tryLaterText = "Please try again later."
 
-var noAccessToken = "There was a problem connecting to facebook, " + tryLaterText;
+var noAccessToken = "There was a problem connecting to facebook. Please check if you are connected to the internet and if you have given this skill permission to read your feed.";// + tryLaterText;
 
 var accessToken = "";
 
@@ -39,7 +39,7 @@ var newSessionHandlers = {
         }
         else {
             // If we dont have an access token, we close down the skill. 
-            this.emit(':tell', noAccessToken, tryLaterText);
+            this.emit(':tellWithLinkAccountCard', "This skill requires you to link a Facebook account. Seems like you are not linked to a Facebook Account. Please link a valid Facebook account and try again.");
         }
     }
 };
@@ -77,12 +77,14 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                 } else {
                     // Handle errors here.
                     console.log(response.error);
+                    this.emit(':tell', noAccessToken, tryLaterText);
                 }
             });
         } else {
             this.emit(':tell', noAccessToken, tryLaterText);
         }
-    },
+    }
+    /*,
       // Write a post to Facebook feed handler.
     'writePostIntent': function () {
 
@@ -109,7 +111,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
         }else{
             this.emit(':tell', noAccessToken, tryLaterText);
         }
-    },
+    }*/,
     'readNFeedIntent':function()
     {
         var alexa = this;
@@ -138,6 +140,7 @@ var commandHandlers = Alexa.CreateStateHandler(states.COMMANDMODE, {
                 } else {
                     // Handle errors here.
                     console.log(response.error);
+                    this.emit(':tell', noAccessToken, tryLaterText);
                 }
             });
 
